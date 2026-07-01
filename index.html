@@ -89,13 +89,6 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-    @keyframes typewriter {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-    @keyframes blink {
-      50% { border-color: transparent; }
-    }
     @keyframes progressPulse {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -248,18 +241,6 @@
     }
     .toast.error { border-color: rgba(239,68,68,0.3); color: #fca5a5; }
     .toast.success { border-color: rgba(52,211,153,0.3); color: #6ee7b7; }
-    .typewriter-wrapper {
-      display: inline-block;
-      position: relative;
-    }
-    .typewriter-text {
-      display: inline-block;
-      overflow: hidden;
-      white-space: nowrap;
-      border-right: 2px solid rgba(167,139,250,0.6);
-      animation: typewriter 2s steps(30) 0.5s forwards, blink 0.8s step-end infinite;
-      width: 0;
-    }
     .confetti-container {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none; z-index: 99;
@@ -273,7 +254,6 @@
     }
     @media (max-width: 640px) {
       .paste-input { height: 240px; font-size: 12px; }
-      .typewriter-text { white-space: normal; border-right: none; width: auto !important; animation: none; }
     }
   </style>
 </head>
@@ -289,11 +269,7 @@
       <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(59,130,246,0.25)">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
       </div>
-      <h1 class="gradient-text" style="font-size:38px;font-weight:800">
-        <span class="typewriter-wrapper">
-          <span class="typewriter-text">ComboPaste</span>
-        </span>
-      </h1>
+      <h1 class="gradient-text" style="font-size:38px;font-weight:800">ComboPaste</h1>
       <p style="margin-top:8px;font-size:14px;color:rgba(255,255,255,0.35)">paste &amp; share &mdash; temporary combolist hosting</p>
     </header>
 
