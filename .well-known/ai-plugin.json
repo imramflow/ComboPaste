@@ -1,0 +1,14 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "ComboPaste",
+  "name_for_model": "combopaste",
+  "description_for_human": "Free temporary pastebin for combolist sharing. Paste and share with auto-expiry.",
+  "description_for_model": "Free anonymous pastebin for combolist sharing. Users can paste text, set an expiry time (1h/6h/1d/7d/30d/forever), and get a shareable link. No account needed, no logs, Cloudflare protected.",
+  "api": {
+    "type": "openapi",
+    "url": "https://combopaste.site/llms.txt"
+  },
+  "logo_url": "https://combopaste.site/favicon.svg",
+  "contact_email": "",
+  "legal_info_url": ""
+}

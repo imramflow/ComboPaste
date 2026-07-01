@@ -1,0 +1,16 @@
+# ComboPaste — Free Temporary Combolist Pastebin
+
+> Free anonymous pastebin for combolist sharing. Paste your list, set auto-expiry (1h, 6h, 1d, 7d, 30d, or forever), and get a shareable link. No account needed, no logs, Cloudflare protected.
+
+## Pages
+- Homepage: https://combopaste.site/
+- Create paste (POST): https://combopaste.site/v/create
+- View paste: https://combopaste.site/v/{id}
+- Raw download: https://combopaste.site/raw/{id}
+
+## Features
+- Temporary hosting with auto-expiry
+- No account or registration required
+- No logs or tracking
+- Cloudflare Worker proxy (origin hidden)
+- Free to use
