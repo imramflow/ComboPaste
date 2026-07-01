@@ -293,7 +293,7 @@
           <span class="typewriter-text">ComboPaste</span>
         </span>
       </h1>
-      <p style="margin-top:8px;font-size:14px;color:rgba(255,255,255,0.35)">Paste a combolist &mdash; get a permanent GitHub link</p>
+      <p style="margin-top:8px;font-size:14px;color:rgba(255,255,255,0.35)">paste &amp; share &mdash; temporary combolist hosting</p>
     </header>
 
     <!-- Main Card -->
@@ -323,15 +323,18 @@
 
       <!-- Expiry -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
-        <span style="font-size:12px;color:rgba(255,255,255,0.25)">Auto-delete</span>
-        <select id="expirySelect" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:8px;color:rgba(255,255,255,0.6);padding:6px 12px;font-size:12px;font-family:'Inter',sans-serif;outline:none;cursor:pointer">
-          <option value="0">Forever</option>
-          <option value="3600">1 Hour</option>
-          <option value="21600">6 Hours</option>
-          <option value="86400">1 Day</option>
-          <option value="604800">7 Days</option>
-          <option value="2592000">30 Days</option>
-        </select>
+        <span style="font-size:12px;color:rgba(255,255,255,0.3);font-weight:500;letter-spacing:0.3px">Auto-delete</span>
+        <div style="position:relative">
+          <select id="expirySelect" style="appearance:none;-webkit-appearance:none;background:rgba(0,0,0,0.35);border:1px solid rgba(139,92,246,0.15);border-radius:10px;color:#c4b5fd;padding:8px 32px 8px 14px;font-size:12px;font-weight:500;font-family:'Inter',sans-serif;outline:none;cursor:pointer;transition:all 0.2s;min-width:120px" onfocus="this.style.borderColor='rgba(139,92,246,0.4)'" onblur="this.style.borderColor='rgba(139,92,246,0.15)'" onmouseover="this.style.background='rgba(0,0,0,0.45)'" onmouseout="this.style.background='rgba(0,0,0,0.35)'">
+            <option value="0" style="background:#0f0f1a;color:#c4b5fd">Forever</option>
+            <option value="3600" style="background:#0f0f1a;color:#c4b5fd">1 Hour</option>
+            <option value="21600" style="background:#0f0f1a;color:#c4b5fd">6 Hours</option>
+            <option value="86400" style="background:#0f0f1a;color:#c4b5fd">1 Day</option>
+            <option value="604800" style="background:#0f0f1a;color:#c4b5fd">7 Days</option>
+            <option value="2592000" style="background:#0f0f1a;color:#c4b5fd">30 Days</option>
+          </select>
+          <svg style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
       </div>
 
       <!-- Stats -->
