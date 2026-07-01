@@ -1,0 +1,3 @@
+user:pass123
+admin:admin456
+test:ok789
