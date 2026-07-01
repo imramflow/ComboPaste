@@ -321,6 +321,19 @@
         </div>
       </div>
 
+      <!-- Expiry -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+        <span style="font-size:12px;color:rgba(255,255,255,0.25)">Auto-delete</span>
+        <select id="expirySelect" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:8px;color:rgba(255,255,255,0.6);padding:6px 12px;font-size:12px;font-family:'Inter',sans-serif;outline:none;cursor:pointer">
+          <option value="0">Forever</option>
+          <option value="3600">1 Hour</option>
+          <option value="21600">6 Hours</option>
+          <option value="86400">1 Day</option>
+          <option value="604800">7 Days</option>
+          <option value="2592000">30 Days</option>
+        </select>
+      </div>
+
       <!-- Stats -->
       <div class="stats-row">
         <span id="lineCount">0 lines</span>
@@ -353,11 +366,6 @@
       <p style="margin-top:16px;color:rgba(255,255,255,0.4);font-size:13px">Creating paste...</p>
     </div>
 
-    <!-- Footer -->
-    <footer style="text-align:center;margin-top:48px;padding-bottom:16px;animation:fadeUp 0.5s ease-out 0.3s both">
-      <a href="https://github.com/imramflow/ComboPaste-Source/issues/new?labels=abuse&title=Abuse+report+" target="_blank" style="font-size:12px;color:rgba(255,255,255,0.2);text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='rgba(255,255,255,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.2)'">Report Abuse</a>
-    </footer>
-
   </div>
 
   <!-- Toast -->
@@ -365,7 +373,7 @@
 
   <script>
     // ===== CONFIG =====
-    const WORKER_URL = 'https://combo-paste-api.beatsbyramflow.workers.dev'
+    const WORKER_URL = '/v/create'
 
     // ===== PARTICLES =====
     const canvas = document.getElementById('particleCanvas')
@@ -457,6 +465,7 @@
     const toast = document.getElementById('toast')
     const progressBar = document.getElementById('progressBar')
     const progressFill = document.getElementById('progressFill')
+    const expirySelect = document.getElementById('expirySelect')
 
     // ===== TOAST =====
     let toastTimer
@@ -591,7 +600,7 @@
         const res = await fetch(WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content })
+          body: JSON.stringify({ content, expiresIn: parseInt(expirySelect.value) })
         })
         progressFill.style.width = '80%'
 
