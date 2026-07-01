@@ -345,10 +345,6 @@
         <input id="resultLink" class="result-input" readonly />
         <button id="copyBtn" class="submit-btn" style="width:auto;padding:10px 20px;margin:0;flex-shrink:0">Copy</button>
       </div>
-      <div style="display:flex;gap:16px;margin-top:10px">
-        <a id="rawLink" href="#" target="_blank" style="font-size:12px;color:rgba(255,255,255,0.3);text-decoration:none">View RAW &rarr;</a>
-        <a id="githubLink" href="#" target="_blank" style="font-size:12px;color:rgba(255,255,255,0.3);text-decoration:none">Open on GitHub &rarr;</a>
-      </div>
     </div>
 
     <!-- Loading -->
@@ -454,8 +450,6 @@
     const submitText = document.getElementById('submitText')
     const resultCard = document.getElementById('resultCard')
     const resultLink = document.getElementById('resultLink')
-    const rawLink = document.getElementById('rawLink')
-    const githubLink = document.getElementById('githubLink')
     const copyBtn = document.getElementById('copyBtn')
     const loading = document.getElementById('loading')
     const lineCount = document.getElementById('lineCount')
@@ -610,8 +604,6 @@
         progressFill.style.width = '100%'
 
         resultLink.value = data.link
-        rawLink.href = data.raw
-        githubLink.href = data.github
         resultCard.style.display = 'block'
 
         showToast('Paste created!', 'success')
