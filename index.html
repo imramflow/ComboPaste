@@ -16,6 +16,11 @@
       color: #fff;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    #particleCanvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
     }
     .bg-orb-1 {
       position: fixed; width: 500px; height: 500px;
@@ -54,6 +59,10 @@
       box-shadow: 0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06);
       position: relative;
       overflow: hidden;
+      transition: box-shadow 0.3s;
+    }
+    .glass:hover {
+      box-shadow: 0 8px 48px rgba(96,165,250,0.08), 0 8px 32px rgba(0,0,0,0.2);
     }
     .glass::before {
       content: '';
@@ -78,6 +87,25 @@
     }
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+    @keyframes typewriter {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+    @keyframes progressPulse {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
+    }
+    @keyframes confettoFall {
+      0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
     }
     .tabs {
       display: flex; gap: 8px; margin-bottom: 16px;
@@ -145,6 +173,7 @@
       font-size: 15px; font-weight: 600; cursor: pointer;
       transition: all 0.2s;
       position: relative;
+      overflow: hidden;
     }
     .submit-btn:hover:not(:disabled) {
       transform: translateY(-1px);
@@ -152,6 +181,34 @@
     }
     .submit-btn:disabled {
       opacity: 0.6; cursor: not-allowed;
+    }
+    .submit-btn .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      transform: scale(0);
+      animation: rippleAnim 0.6s ease-out;
+      pointer-events: none;
+    }
+    .progress-bar {
+      width: 100%; height: 3px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+      margin-top: 12px;
+      overflow: hidden;
+      display: none;
+    }
+    .progress-bar.active {
+      display: block;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #a78bfa, #f472b6, #3b82f6);
+      background-size: 300% 100%;
+      border-radius: 4px;
+      animation: progressPulse 2s linear infinite;
+      transition: width 0.3s;
     }
     .result-card {
       margin-top: 16px; padding: 24px;
@@ -190,12 +247,37 @@
     }
     .toast.error { border-color: rgba(239,68,68,0.3); color: #fca5a5; }
     .toast.success { border-color: rgba(52,211,153,0.3); color: #6ee7b7; }
+    .typewriter-wrapper {
+      display: inline-block;
+      position: relative;
+    }
+    .typewriter-text {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid rgba(167,139,250,0.6);
+      animation: typewriter 2s steps(30) 0.5s forwards, blink 0.8s step-end infinite;
+      width: 0;
+    }
+    .confetti-container {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 99;
+      overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 8px; height: 8px;
+      top: -10px;
+      animation: confettoFall linear forwards;
+    }
     @media (max-width: 640px) {
       .paste-input { height: 240px; font-size: 12px; }
+      .typewriter-text { white-space: normal; border-right: none; width: auto !important; animation: none; }
     }
   </style>
 </head>
 <body>
+  <canvas id="particleCanvas"></canvas>
   <div class="bg-orb-1"></div>
   <div class="bg-orb-2"></div>
 
@@ -206,7 +288,11 @@
       <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(59,130,246,0.25)">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
       </div>
-      <h1 class="gradient-text" style="font-size:38px;font-weight:800">ComboPaste</h1>
+      <h1 class="gradient-text" style="font-size:38px;font-weight:800">
+        <span class="typewriter-wrapper">
+          <span class="typewriter-text">ComboPaste</span>
+        </span>
+      </h1>
       <p style="margin-top:8px;font-size:14px;color:rgba(255,255,255,0.35)">Paste a combolist &mdash; get a permanent GitHub link</p>
     </header>
 
@@ -241,6 +327,11 @@
         <span id="charCount">0 chars</span>
       </div>
 
+      <!-- Progress Bar -->
+      <div id="progressBar" class="progress-bar">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+
       <!-- Submit -->
       <button id="submitBtn" class="submit-btn">
         <span id="submitText">Generate Link</span>
@@ -272,12 +363,79 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    // ===== CONFIG — replace these =====
-    const PAT = 'github_pat_11AVHHKAY0ZcknJzVAb8dL_nUIETUvFraejJHk0'
-    const OWNER = 'imramflow'
-    const DATA_REPO = 'ComboPaste'
-    const SOURCE_REPO = 'ComboPaste-Source'
-    const API_BASE = 'https://api.github.com'
+    // ===== CONFIG =====
+    const WORKER_URL = 'https://combo-paste-api.beatsbyramflow.workers.dev'
+
+    // ===== PARTICLES =====
+    const canvas = document.getElementById('particleCanvas')
+    const ctx = canvas.getContext('2d')
+    let particles = []
+    let animId
+
+    function resizeParticles() {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    resizeParticles()
+    window.addEventListener('resize', resizeParticles)
+
+    class Particle {
+      constructor() {
+        this.reset()
+      }
+      reset() {
+        this.x = Math.random() * canvas.width
+        this.y = Math.random() * canvas.height
+        this.size = Math.random() * 2 + 0.5
+        this.speedX = (Math.random() - 0.5) * 0.3
+        this.speedY = (Math.random() - 0.5) * 0.3
+        this.opacity = Math.random() * 0.4 + 0.1
+      }
+      update() {
+        this.x += this.speedX
+        this.y += this.speedY
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1
+      }
+      draw() {
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(167, 139, 250, ${this.opacity})`
+        ctx.fill()
+      }
+    }
+
+    function initParticles() {
+      const count = Math.min(Math.floor(canvas.width * canvas.height / 8000), 80)
+      particles = Array.from({ length: count }, () => new Particle())
+    }
+    initParticles()
+
+    function drawConnections() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x
+          const dy = particles[i].y - particles[j].y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < 150) {
+            ctx.beginPath()
+            ctx.moveTo(particles[i].x, particles[i].y)
+            ctx.lineTo(particles[j].x, particles[j].y)
+            ctx.strokeStyle = `rgba(167, 139, 250, ${0.08 * (1 - dist / 150)})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      particles.forEach(p => { p.update(); p.draw() })
+      drawConnections()
+      animId = requestAnimationFrame(animateParticles)
+    }
+    animateParticles()
 
     // ===== DOM =====
     const tabPaste = document.getElementById('tabPaste')
@@ -298,6 +456,8 @@
     const lineCount = document.getElementById('lineCount')
     const charCount = document.getElementById('charCount')
     const toast = document.getElementById('toast')
+    const progressBar = document.getElementById('progressBar')
+    const progressFill = document.getElementById('progressFill')
 
     // ===== TOAST =====
     let toastTimer
@@ -366,6 +526,49 @@
       reader.readAsText(file)
     }
 
+    // ===== RIPPLE =====
+    function createRipple(e) {
+      const btn = e.currentTarget
+      const rect = btn.getBoundingClientRect()
+      const size = Math.max(rect.width, rect.height)
+      const x = e.clientX - rect.left - size / 2
+      const y = e.clientY - rect.top - size / 2
+      const ripple = document.createElement('span')
+      ripple.className = 'ripple'
+      ripple.style.width = ripple.style.height = size + 'px'
+      ripple.style.left = x + 'px'
+      ripple.style.top = y + 'px'
+      btn.appendChild(ripple)
+      ripple.addEventListener('animationend', () => ripple.remove())
+    }
+    submitBtn.addEventListener('click', createRipple)
+    copyBtn.addEventListener('click', createRipple)
+
+    // ===== CONFETTI =====
+    function fireConfetti() {
+      const container = document.createElement('div')
+      container.className = 'confetti-container'
+      document.body.appendChild(container)
+      const colors = ['#3b82f6', '#a78bfa', '#f472b6', '#34d399', '#fbbf24', '#60a5fa']
+      const shapes = ['circle', 'square']
+      for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div')
+        piece.className = 'confetti-piece'
+        const color = colors[Math.floor(Math.random() * colors.length)]
+        const size = Math.random() * 6 + 4
+        const shape = shapes[Math.floor(Math.random() * shapes.length)]
+        piece.style.width = size + 'px'
+        piece.style.height = (shape === 'circle' ? size : size * 0.6) + 'px'
+        piece.style.borderRadius = shape === 'circle' ? '50%' : '2px'
+        piece.style.background = color
+        piece.style.left = Math.random() * 100 + '%'
+        piece.style.animationDuration = (Math.random() * 2 + 2) + 's'
+        piece.style.animationDelay = (Math.random() * 0.5) + 's'
+        container.appendChild(piece)
+      }
+      setTimeout(() => container.remove(), 4000)
+    }
+
     // ===== SUBMIT =====
     submitBtn.onclick = async () => {
       const content = pasteInput.value
@@ -378,54 +581,36 @@
       submitText.textContent = 'Creating...'
       resultCard.style.display = 'none'
       loading.style.display = 'block'
-
-      const id = crypto.randomUUID()
-      const filename = id + '.txt'
-      const path = 'pastes/' + filename
+      progressBar.classList.add('active')
+      progressFill.style.width = '0%'
 
       try {
-        const base64 = btoa(unescape(encodeURIComponent(content)))
+        progressFill.style.width = '20%'
+        await new Promise(r => setTimeout(r, 100))
+        progressFill.style.width = '40%'
 
-        const res = await fetch(API_BASE + '/repos/' + OWNER + '/' + DATA_REPO + '/contents/' + path, {
-          method: 'PUT',
-          headers: {
-            'Authorization': 'Bearer ' + PAT,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: 'Add paste ' + id,
-            content: base64,
-          })
+        const res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content })
         })
+        progressFill.style.width = '80%'
 
         if (!res.ok) {
-          const err = await res.json().catch(() => ({}))
-          throw new Error(err.message || 'HTTP ' + res.status)
+          const err = await res.text().catch(() => 'Unknown error')
+          throw new Error(err)
         }
 
-        // Fire-and-forget dispatch to private repo
-        fetch(API_BASE + '/repos/' + OWNER + '/' + SOURCE_REPO + '/dispatches', {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + PAT,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            event_type: 'paste-created',
-            client_payload: { id, filename }
-          })
-        }).catch(() => {})
+        const data = await res.json()
+        progressFill.style.width = '100%'
 
-        const link = 'https://' + OWNER + '.github.io/' + DATA_REPO + '/' + path
-        const raw = 'https://raw.githubusercontent.com/' + OWNER + '/' + DATA_REPO + '/main/' + path
-        const gh = 'https://github.com/' + OWNER + '/' + DATA_REPO + '/blob/main/' + path
-
-        resultLink.value = link
-        rawLink.href = raw
-        githubLink.href = gh
+        resultLink.value = data.link
+        rawLink.href = data.raw
+        githubLink.href = data.github
         resultCard.style.display = 'block'
 
         showToast('Paste created!', 'success')
+        fireConfetti()
 
       } catch (err) {
         showToast(err.message || 'Something went wrong', 'error')
@@ -433,6 +618,10 @@
         loading.style.display = 'none'
         submitBtn.disabled = false
         submitText.textContent = 'Generate Link'
+        setTimeout(() => {
+          progressBar.classList.remove('active')
+          progressFill.style.width = '0%'
+        }, 500)
       }
     }
 
