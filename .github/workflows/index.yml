@@ -1,0 +1,35 @@
+name: Index Pastes
+on:
+  push:
+    branches: [main]
+    paths: ['pastes/**']
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build paste index
+        run: |
+          echo '[' > pastes/index.json
+          first=true
+          for f in pastes/*.txt; do
+            [ "$f" = "pastes/*.txt" ] && break
+            [ "$f" = "pastes/index.json" ] && continue
+            name=$(basename "$f" .txt)
+            size=$(wc -c < "$f")
+            lines=$(wc -l < "$f")
+            date=$(git log --format=%aI "$f" | tail -1)
+            $first || echo ',' >> pastes/index.json
+            first=false
+            cat >> pastes/index.json <<- JSON
+            {"id":"$name","size":$size,"lines":$lines,"created":"$date"}
+            JSON
+          done
+          echo ']' >> pastes/index.json
+      - run: |
+          git config user.name "paste-bot"
+          git config user.email "bot@github.com"
+          git add pastes/index.json
+          git diff --staged --quiet || git commit -m "update paste index"
+          git push
