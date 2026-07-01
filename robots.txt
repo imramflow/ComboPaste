@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /v/
+Disallow: /raw/
+
+Sitemap: https://combopaste.site/sitemap.xml
